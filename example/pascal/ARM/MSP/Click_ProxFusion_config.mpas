@@ -1,0 +1,9 @@
+unit Click_ProxFusion_config;
+
+uses Click_ProxFusion_types;
+
+const
+    _PROXFUSION_I2C_CFG : array[1] of uint32_t = (100000); 
+    _PROXFUSION_UART_CFG : array[1] of uint32_t = (9600); 
+    
+end.

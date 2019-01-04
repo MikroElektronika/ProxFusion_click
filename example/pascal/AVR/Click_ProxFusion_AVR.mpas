@@ -1,0 +1,81 @@
+{*
+Example for ProxFusion Click
+
+    Date          : Dec 2017.
+    Author        : MikroE Team
+
+Test configuration AVR :
+    
+    MCU              : ATMEGA32
+    Dev. Board       : EasyAVR v7 
+    AVR Compiler ver : v7.0.1.0
+
+---
+
+Description :
+
+The application is composed of three sections :
+
+- System Initialization -  Intializes I2C module
+- Application Initialization -  Driver intialization and ProxFusion settings mode
+- Application Task - (code snippet) -
+
+*}
+program Click_ProxFusion_AVR;
+
+uses Click_ProxFusion_types, Click_ProxFusion_config;
+
+var
+    touch : uint8_t; 
+    
+procedure systemInit(); 
+begin
+
+    mikrobus_i2cInit(_MIKROBUS1, @_PROXFUSION_I2C_CFG[0]); 
+    mikrobus_logInit(_LOG_USBUART, 9600); 
+    Delay_100ms(); 
+
+end;
+
+procedure applicationInit(); 
+begin
+
+    proxfusion_i2cDriverInit(T_PROXFUSION_P(@_MIKROBUS1_GPIO), T_PROXFUSION_P(@_MIKROBUS1_I2C), 0x44); 
+    proxfusion_systemSetting((((((_PROXFUSION_SYSTEM_RESET or _PROXFUSION_EVENT_MODE_1) or _PROXFUSION_CLOCK_16MHz) or _PROXFUSION_ATI_ENABLED) or _PROXFUSION_ATI_BAND_1_16) or _PROXFUSION_SYSTEM_ATI_RESET)); 
+    proxfusion_EventMask(_PROXFUSION_MASK_SYS_EVENT); 
+    Delay_1sec(); 
+    mikrobus_logWrite('Initialize.....', _LOG_LINE); 
+    Delay_1sec(); 
+
+end;
+
+procedure applicationTask(); 
+begin
+
+    touch := proxfusion_Touch(); 
+    if ((touch = 1)) then 
+    begin
+        mikrobus_logWrite('Touch 1', _LOG_LINE); 
+    end; 
+    if ((touch = 2)) then 
+    begin
+        mikrobus_logWrite('Touch 2', _LOG_LINE); 
+    end; 
+    if ((touch = 3)) then 
+    begin
+        mikrobus_logWrite('Touch antenna', _LOG_LINE); 
+    end; 
+    Delay_100ms(); 
+
+end;
+
+begin
+
+    systemInit(); 
+    applicationInit(); 
+    while (1) do 
+    begin 
+        applicationTask(); 
+    end;
+
+end.

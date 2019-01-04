@@ -1,0 +1,9 @@
+module Click_ProxFusion_config
+
+include Click_ProxFusion_types
+
+const
+    _PROXFUSION_I2C_CFG as uint32_t[2] = (_I2CM_SPEED_MODE_STANDARD, _I2CM_SWAP_DISABLE)
+    _PROXFUSION_UART_CFG as uint32_t[1] = (9600)
+    
+end.
